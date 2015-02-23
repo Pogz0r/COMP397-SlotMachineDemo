@@ -4,7 +4,8 @@
 // VARIABLES ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 var canvas; // Reference to the HTML 5 Canvas element
 var stage: createjs.Stage; // Reference to the Stage
-var reels: createjs.Bitmap[] = [];
+var tiles: createjs.Bitmap[] = [];
+var reelContainers: createjs.Container[] = [];
 
 // GAME VARIABLES
 var playerMoney = 1000;
@@ -210,22 +211,17 @@ function determineWinnings() {
 
 // MAIN MEAT of my code goes here 
 function spinButtonClicked() {
+
     spinResult = Reels();
     fruits = spinResult[0] + " - " + spinResult[1] + " - " + spinResult[2];
-    console.log(fruits);
-    reels[0] = new createjs.Bitmap("assets/images/" + spinResult[0] + ".png");
-    reels[0].x = 128;
-    reels[0].y = 296;
-    reels[1] = new createjs.Bitmap("assets/images/" + spinResult[1] + ".png");
-    reels[1].x = 248;
-    reels[1].y = 296;
-    reels[2] = new createjs.Bitmap("assets/images/" + spinResult[2] + ".png");
-    reels[2].x = 374;
-    reels[2].y = 296;
+    
 
-    for (var reel = 0; reel < reels.length; reel++) {
-        game.addChild(reels[reel]);
+    for (var index = 0; index < 3; index++) {
+        reelContainers[index].removeAllChildren();
+        tiles[index] = new createjs.Bitmap("assets/images/" + spinResult[index] + ".png");
+        reelContainers[index].addChild(tiles[index]);
     }
+    console.log(game.getNumChildren());
 }
 
 function spinButtonOut() {
@@ -242,6 +238,19 @@ function createUI() {
 
     background = new createjs.Bitmap("assets/images/background.png");
     game.addChild(background); // Add the background to the game container
+
+    for (var index = 0; index < 3; index++) {
+        reelContainers[index] = new createjs.Container();
+        game.addChild(reelContainers[index]);
+    }
+    reelContainers[0].x = 128;
+    reelContainers[0].y = 296;
+    reelContainers[1].x = 248;
+    reelContainers[1].y = 296;
+    reelContainers[2].x = 374;
+    reelContainers[2].y = 296;
+
+
 
     // Spin Button
     spinButton = new createjs.Bitmap("assets/images/spinButton.png");
