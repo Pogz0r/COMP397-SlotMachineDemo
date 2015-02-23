@@ -1,11 +1,69 @@
 ﻿// CreateJS Boilerplate for COMP397
 
 
+class Button {
+    //PRIVATE INSTANCE VARIABLES
+    private _image: createjs.Bitmap;
+    private _x: number;
+    private _y: number;
+
+    constructor(path: string, x: number, y: number) {
+        this._x = x;
+        this._y = y;
+        this._image = new createjs.Bitmap(path);
+        this._image.x = this._x;
+        this._image.y = this._y;
+
+        this._image.addEventListener("mouseover", this._buttonOver);
+        this._image.addEventListener("mouseout", this._buttonOut);
+    }
+
+    // PUBLIC PROPERTIES
+    public setX(x: number):void {
+        this._x = x;
+    }
+
+    public getX():number { 
+        return this._x;
+    }
+
+    public setY(y: number):void {
+        this._y = y;
+    }
+
+    public getY(): number {
+        return this._y;
+    }
+
+    public getImage(): createjs.Bitmap {
+        return this._image;
+    }
+
+
+    // PRIVATE EVENT HANDLERS
+    private _buttonOut(event: createjs.MouseEvent):void {
+     event.currentTarget.alpha = 1; // 100% Alpha 
+
+    }
+
+    private _buttonOver(event: createjs.MouseEvent):void {
+    event.currentTarget.alpha = 0.5;
+
+    }
+}
+
+
+
+
 // VARIABLES ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 var canvas; // Reference to the HTML 5 Canvas element
 var stage: createjs.Stage; // Reference to the Stage
 var tiles: createjs.Bitmap[] = [];
 var reelContainers: createjs.Container[] = [];
+
+// GAME CONSTANTS
+var NUM_REELS: number = 3;
+
 
 // GAME VARIABLES
 var playerMoney = 1000;
@@ -34,11 +92,11 @@ var blanks = 0;
 // GAME OBJECTS
 var game: createjs.Container; // Main Game Container Object
 var background: createjs.Bitmap;
-var spinButton: createjs.Bitmap;
-var betMaxButton: createjs.Bitmap;
-var betOneButton: createjs.Bitmap;
-var resetButton: createjs.Bitmap;
-var powerButton: createjs.Bitmap;
+var spinButton: Button;
+var betMaxButton: Button;
+var betOneButton: Button;
+var resetButton: Button;
+var powerButton: Button;
 
 
 // FUNCTIONS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -210,36 +268,26 @@ function determineWinnings() {
 
 
 // MAIN MEAT of my code goes here 
-function spinButtonClicked() {
+function spinButtonClicked(event: createjs.MouseEvent) {
 
     spinResult = Reels();
     fruits = spinResult[0] + " - " + spinResult[1] + " - " + spinResult[2];
     
-
-    for (var index = 0; index < 3; index++) {
+    // Iterate over the number of reels
+    for (var index = 0; index < NUM_REELS; index++) {
         reelContainers[index].removeAllChildren();
         tiles[index] = new createjs.Bitmap("assets/images/" + spinResult[index] + ".png");
         reelContainers[index].addChild(tiles[index]);
     }
-    console.log(game.getNumChildren());
 }
 
-function spinButtonOut() {
-    spinButton.alpha = 1; // 100% Alpha 
-
-}
-
-function spinButtonOver() {
-    spinButton.alpha = 0.7;
-
-}
 
 function createUI() {
 
     background = new createjs.Bitmap("assets/images/background.png");
     game.addChild(background); // Add the background to the game container
 
-    for (var index = 0; index < 3; index++) {
+    for (var index = 0; index < NUM_REELS; index++) {
         reelContainers[index] = new createjs.Container();
         game.addChild(reelContainers[index]);
     }
@@ -253,41 +301,34 @@ function createUI() {
 
 
     // Spin Button
-    spinButton = new createjs.Bitmap("assets/images/spinButton.png");
-    game.addChild(spinButton);
-    spinButton.x = 410;
-    spinButton.y = 545;
+    spinButton = new Button("assets/images/spinButton.png", 410, 545);
+    game.addChild(spinButton.getImage());
+
 
     // Spin Button Event Listeners
-    spinButton.addEventListener("click", spinButtonClicked);
-    spinButton.addEventListener("mouseover", spinButtonOver);
-    spinButton.addEventListener("mouseout", spinButtonOut);
-
-
+    spinButton.getImage().addEventListener("click", spinButtonClicked);
 
     // Bet Max Button
-    betMaxButton = new createjs.Bitmap("assets/images/betMaxButton.png");
-    game.addChild(betMaxButton);
-    betMaxButton.x = 325;
-    betMaxButton.y = 560;
+    betMaxButton = new Button("assets/images/betMaxButton.png", 325, 560);
+    game.addChild(betMaxButton.getImage());
+    betMaxButton.getImage().addEventListener("click", spinButtonClicked);
+
 
     // Bet One Button
-    betOneButton = new createjs.Bitmap("assets/images/betOneButton.png");
-    game.addChild(betOneButton);
-    betOneButton.x = 235;
-    betOneButton.y = 560;
+    betOneButton = new Button("assets/images/betOneButton.png", 235, 560);
+    game.addChild(betOneButton.getImage());
+    betOneButton.getImage().addEventListener("click", spinButtonClicked);
+
 
     // Reset Button
-    resetButton = new createjs.Bitmap("assets/images/resetButton.png");
-    game.addChild(resetButton);
-    resetButton.x = 150;
-    resetButton.y = 560;
+    resetButton = new Button("assets/images/resetButton.png", 150, 560);
+    game.addChild(resetButton.getImage());
+    resetButton.getImage().addEventListener("click", spinButtonClicked);
 
     // Power Button
-    powerButton = new createjs.Bitmap("assets/images/powerButton.png");
-    game.addChild(powerButton);
-    powerButton.x = 55;
-    powerButton.y = 560;
+    powerButton = new Button("assets/images/powerButton.png", 55, 560);
+    game.addChild(powerButton.getImage());
+    powerButton.getImage().addEventListener("click", spinButtonClicked);
 
 }
 
